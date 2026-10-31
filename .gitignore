@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.env
+/data/
+server.*.log
+turbo_szrot.sqlite
+
+# lokalne bazy, klucze i certyfikaty
+*.sqlite
+nginx/ssl/certs/*
+!nginx/ssl/certs/.gitkeep
+*.key
+*.pem
