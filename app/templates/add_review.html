@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wystaw opinię - Turbo Szrot</title>
+    <style>
+        *{box-sizing:border-box}
+        body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#333}
+        header{background:#260e7a;color:#59bde8;padding:20px;text-align:center}
+        main{max-width:680px;margin:30px auto;padding:0 20px}
+        .card{background:#fff;padding:24px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+        h2{margin-top:0;color:#260e7a}
+        .summary{padding:14px;background:#f8f9fa;border-radius:6px;margin-bottom:20px;line-height:1.7}
+        label{display:block;font-weight:bold;margin:16px 0 6px}
+        select,textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:6px;font:inherit}
+        textarea{min-height:120px;resize:vertical}
+        .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+        button,.btn{padding:11px 18px;border:0;border-radius:5px;font-weight:bold;text-decoration:none;cursor:pointer}
+        button{background:#260e7a;color:#fff}
+        .btn{background:#e9eef8;color:#260e7a}
+        .message{padding:12px;background:#f8d7da;color:#721c24;border-radius:5px;margin-bottom:14px}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Wystaw opinię sprzedawcy</h1>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="card">
+            <h2>Jak oceniasz transakcję?</h2>
+            <div class="summary">
+                <div><strong>Zamówienie:</strong> #{{ order.id }}</div>
+                <div><strong>Sprzedawca:</strong> {{ seller.username if seller else ('#' ~ order.seller_id) }}</div>
+                <div><strong>Oferta:</strong> {{ part.project_name if part else ('#' ~ order.part_id) }}</div>
+                <div><strong>Kwota:</strong> {{ "%.2f"|format(order.total_price) }} PLN</div>
+            </div>
+
+            <form method="post" action="{{ url_for('add_review', order_id=order.id) }}">
+                <label for="rating">Ocena sprzedawcy</label>
+                <select id="rating" name="rating" required>
+                    <option value="">Wybierz ocenę</option>
+                    <option value="5">5 - bardzo dobrze</option>
+                    <option value="4">4 - dobrze</option>
+                    <option value="3">3 - przeciętnie</option>
+                    <option value="2">2 - słabo</option>
+                    <option value="1">1 - bardzo słabo</option>
+                </select>
+
+                <label for="comment">Krótka opinia</label>
+                <textarea id="comment" name="comment" maxlength="500" placeholder="Napisz kilka słów o sprzedawcy i realizacji zamówienia." required></textarea>
+
+                <div class="actions">
+                    <button type="submit">Dodaj opinię</button>
+                    <a class="btn" href="{{ url_for('orders') }}">Wróć do zamówień</a>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Turbo Szrot - Rejestracja</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        header {
+            background-color: #260e7a;
+            color: #59bde8;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        nav a:hover {
+            opacity: 0.8;
+        }
+        main {
+            max-width: 480px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e8e8e8;
+        }
+        h2 {
+            color: #260e7a;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 2px solid #59bde8;
+            padding-bottom: 8px;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        input:focus {
+            border-color: #260e7a;
+            box-shadow: 0 0 0 3px rgba(38, 14, 122, 0.1);
+        }
+        button {
+            background-color: #260e7a;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s, filter 0.3s;
+        }
+        button:hover {
+            filter: brightness(1.15);
+        }
+        .message {
+            padding: 12px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c2c7;
+            border-radius: 10px;
+            color: #842029;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .password-rules {
+            margin: 5px 0 20px 0;
+            padding: 12px 16px;
+            background-color: #f7f8fc;
+            border-radius: 10px;
+            list-style: none;
+            font-size: 0.9rem;
+            color: #666;
+            border: 1px solid #e1e4eb;
+        }
+        .password-rules li {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .password-rules li::before {
+            content: "•";
+            color: #ccc;
+            font-weight: bold;
+            display: inline-block;
+            width: 12px;
+        }
+        .password-rules li.valid {
+            color: #1f8a4c;
+            font-weight: bold;
+        }
+        .password-rules li.valid::before {
+            content: "✓";
+            color: #1f8a4c;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+        a {
+            color: #59bde8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Turbo Szrot</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a> |
+            <a href="{{ url_for('login') }}">Logowanie</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Rejestracja</h2>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" action="{{ url_for('register') }}">
+            <p>
+                <label for="username">Nazwa użytkownika</label>
+                <input type="text" id="username" name="username" required />
+            </p>
+            <p>
+                <label for="password">Hasło</label>
+                <input type="password" id="password" name="password" minlength="8" required />
+            </p>
+            <ul class="password-rules" aria-label="Wymagania hasła">
+                <li data-rule="length">Minimum 8 znaków</li>
+                <li data-rule="lower">Mała litera</li>
+                <li data-rule="upper">Wielka litera</li>
+                <li data-rule="digit">Cyfra</li>
+                <li data-rule="special">Znak specjalny</li>
+            </ul>
+            <p>
+                <label for="repeated_password">Powtórz hasło</label>
+                <input type="password" id="repeated_password" name="repeated_password" minlength="8" required />
+            </p>
+            <button type="submit">Zarejestruj</button>
+        </form>
+
+        <p class="login-link">Masz już konto? <a href="{{ url_for('login') }}">Zaloguj się</a>.</p>
+    </main>
+    <script>
+        const passwordInput = document.querySelector("#password");
+        const rules = {
+            length: document.querySelector('[data-rule="length"]'),
+            lower: document.querySelector('[data-rule="lower"]'),
+            upper: document.querySelector('[data-rule="upper"]'),
+            digit: document.querySelector('[data-rule="digit"]'),
+            special: document.querySelector('[data-rule="special"]'),
+        };
+
+        function setRuleState(rule, isValid) {
+            rules[rule].classList.toggle("valid", isValid);
+        }
+
+        passwordInput.addEventListener("input", () => {
+            const value = passwordInput.value;
+
+            setRuleState("length", value.length >= 8);
+            setRuleState("lower", /[a-z]/.test(value));
+            setRuleState("upper", /[A-Z]/.test(value));
+            setRuleState("digit", /\d/.test(value));
+            setRuleState("special", /[^A-Za-z0-9]/.test(value));
+        });
+    </script>
+</body>
+</html>

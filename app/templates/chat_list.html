@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Wiadomości - Turbo Szrot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        header { background: #260e7a; color: #59bde8; padding: 20px; text-align: center; }
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        nav { margin-top: 10px; }
+        nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; transition: opacity 0.3s; }
+        nav a:hover { opacity: 0.8; }
+        main { max-width: 900px; margin: 30px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .conv-list { list-style: none; padding: 0; }
+        .conv-item { padding: 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .conv-item:last-child { border-bottom: none; }
+        .conv-info { display: flex; flex-direction: column; gap: 5px; }
+        .conv-part { font-weight: bold; color: #260e7a; font-size: 1.1em; }
+        .conv-meta { font-size: 0.9em; color: #666; }
+        .btn { padding: 8px 12px; background: #59bde8; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; }
+        .btn:hover { background: #4ca3c9; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Turbo Szrot</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a> |
+            <a href="{{ url_for('favorites') }}">Ulubione</a> |
+            <a href="{{ url_for('orders') }}">Zamówienia</a> |
+            <a href="{{ url_for('chat_list') }}">Wiadomości{% if unread_messages_count and unread_messages_count > 0 %} <span style="background:#d9534f;color:white;padding:2px 6px;border-radius:10px;font-size:0.8em;margin-left:4px;">{{ unread_messages_count }}</span>{% endif %}</a> |
+            <a href="{{ url_for('add_part') }}">Dodaj część</a> |
+            <a href="{{ url_for('seller_panel') }}">Panel sprzedawcy</a> |
+            <a href="{{ url_for('settings') }}">Ustawienia konta</a> |
+            <span>Zalogowano: {{ current_user.username }}</span>
+            {% if seller_unread_count and seller_unread_count > 0 %}
+                <a href="{{ url_for('seller_panel') }}" style="margin-left:8px;background:#d9534f;color:white;padding:4px 8px;border-radius:12px;text-decoration:none;">Nowe zamówienia: {{ seller_unread_count }}</a>
+            {% endif %}
+            <form method="post" action="{{ url_for('logout') }}" style="display: inline;">
+                <button type="submit" style="background: none; border: 0; color: white; cursor: pointer; font-weight: bold;">Wyloguj</button>
+            </form>
+        </nav>
+    </header>
+    <main>
+        <h2>Moje Wiadomości</h2>
+
+        <h3>Kupuję</h3>
+        {% if buyer_convs %}
+            <ul class="conv-list">
+                {% for conv, part in buyer_convs %}
+                <li class="conv-item">
+                    <div class="conv-info">
+                        <span class="conv-part">{{ part.brand }} {{ part.model }}</span>
+                        <span class="conv-meta">Sprzedawca ID: {{ conv.seller_id }} | Rozpoczęto: {{ conv.created_at }}</span>
+                    </div>
+                    <a class="btn" href="{{ url_for('chat_room', conv_id=conv.id, source='chat_list') }}">Przejdź do czatu</a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Brak rozpoczętych rozmów.</p>
+        {% endif %}
+
+        <h3 style="margin-top: 30px;">Sprzedaję</h3>
+        {% if seller_convs %}
+            <ul class="conv-list">
+                {% for conv, part in seller_convs %}
+                <li class="conv-item">
+                    <div class="conv-info">
+                        <span class="conv-part">{{ part.brand }} {{ part.model }}</span>
+                        <span class="conv-meta">Kupujący ID: {{ conv.buyer_id }} | Rozpoczęto: {{ conv.created_at }}</span>
+                    </div>
+                    <a class="btn" href="{{ url_for('chat_room', conv_id=conv.id, source='chat_list') }}">Przejdź do czatu</a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Brak rozmów z klientami.</p>
+        {% endif %}
+    </main>
+</body>
+</html>

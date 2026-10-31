@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zamówienia - Turbo Szrot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{font-family:Arial,sans-serif;background:#f5f5f5;color:#333}
+        header{background:#260e7a;color:#59bde8;padding:20px;text-align:center}
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        nav {margin-top: 10px;}
+        nav a {color: white; text-decoration: none; margin: 0 15px; font-weight: bold;}
+        nav a:hover {opacity: 0.8;}
+        main{max-width:1000px;margin:30px auto;padding:0 20px}
+        table{width:100%;border-collapse:collapse;background:#fff;border-radius:6px;overflow:hidden}
+        th,td{padding:12px;border-bottom:1px solid #eee;text-align:left}
+        th{background:#f8f9fa}
+        a{color:#59bde8}
+        .review-btn{display:inline-block;padding:8px 12px;border-radius:4px;background:#260e7a;color:#fff;text-decoration:none;font-weight:bold;white-space:nowrap}
+    </style>
+</head>
+<body>
+<header>
+    <h1>Turbo Szrot</h1>
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a> |
+        <a href="{{ url_for('favorites') }}">Ulubione</a> |
+        <a href="{{ url_for('orders') }}">Zamówienia</a> |
+        <a href="{{ url_for('chat_list') }}">Wiadomości{% if unread_messages_count and unread_messages_count > 0 %} <span style="background:#d9534f;color:white;padding:2px 6px;border-radius:10px;font-size:0.8em;margin-left:4px;">{{ unread_messages_count }}</span>{% endif %}</a> |
+        <a href="{{ url_for('add_part') }}">Dodaj część</a> |
+        <a href="{{ url_for('seller_panel') }}">Panel sprzedawcy</a> |
+        <a href="{{ url_for('settings') }}">Ustawienia konta</a> |
+        <span>Zalogowano: {{ current_user.username }}</span>
+        {% if seller_unread_count and seller_unread_count > 0 %}
+            <a href="{{ url_for('seller_panel') }}" style="margin-left:8px;background:#d9534f;color:white;padding:4px 8px;border-radius:12px;text-decoration:none;">Nowe zamówienia: {{ seller_unread_count }}</a>
+        {% endif %}
+        <form method="post" action="{{ url_for('logout') }}" style="display: inline;">
+            <button type="submit" style="background: none; border: 0; color: white; cursor: pointer; font-weight: bold;">Wyloguj</button>
+        </form>
+    </nav>
+</header>
+<main>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <section>
+                {% for message in messages %}
+                    <div style="background:#f8d7da;padding:12px;margin-bottom:12px;border-radius:4px;color:#721c24">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    {% if orders %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Oferta</th>
+                    <th>Ilość</th>
+                    <th>Razem</th>
+                    <th>Dostawa</th>
+                    <th>Adres</th>
+                    <th>Status</th>
+                    <th>Ocena sprzedawcy</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                    <tr>
+                        <td>{{ o.id }}</td>
+                        <td>
+                            {% set p = parts.get(o.part_id) %}
+                            {% if p %}
+                                <a href="{{ url_for('offer_detail', part_id=p.id) }}">{{ p.project_name }}</a>
+                            {% else %}
+                                --
+                            {% endif %}
+                        </td>
+                        <td>{{ o.quantity }}</td>
+                        <td>{{ "%.2f"|format(o.total_price) }} PLN</td>
+                        <td>
+                            {% if o.delivery_option == 'dostawa' %}
+                                Dostawa
+                            {% else %}
+                                Odbiór osobisty
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if o.delivery_option == 'dostawa' %}
+                                {{ o.address or '-' }}
+                            {% else %}
+                                Termin do uzgodnienia w wiadomości prywatnej
+                            {% endif %}
+                        </td>
+                        <td>{{ o.status }}</td>
+                        <td>
+                            {% set review = reviews_by_order.get(o.id) %}
+                            {% if review %}
+                                <strong>{{ review.rating }}/5</strong>
+                                <div>{{ review.comment }}</div>
+                            {% elif o.status == 'zrealizowane' %}
+                                <a class="review-btn" href="{{ url_for('add_review', order_id=o.id) }}">Wystaw opinię</a>
+                            {% else %}
+                                Po realizacji zamówienia
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div style="background:#fff;padding:20px;border-radius:6px">Brak zamówień.</div>
+    {% endif %}
+
+    <div style="margin-top:16px"><a href="{{ url_for('home') }}">Powrót</a></div>
+</main>
+</body>
+</html>

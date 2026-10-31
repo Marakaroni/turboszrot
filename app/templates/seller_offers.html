@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oferty sprzedawcy - Turbo Szrot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        header {
+            background-color: #260e7a;
+            color: #59bde8;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #59bde8;
+            margin-bottom: 15px;
+        }
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin-top: 10px;
+        }
+        .offer-card {
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+        .offer-card__image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: #f4f6fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .offer-card__image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .offer-card__image span {
+            color: #8a8a8a;
+            font-weight: 600;
+        }
+        .offer-card__body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .offer-card__title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #260e7a;
+            line-height: 1.3;
+        }
+        .offer-card__price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #59bde8;
+        }
+        .offer-card__meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            font-size: 0.92rem;
+            color: #444;
+        }
+        .offer-card__meta div {
+            background: #f7f8fc;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+        .offer-card__actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .offer-card__actions a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .offer-card__actions .primary {
+            background: #260e7a;
+            color: #fff;
+        }
+        .offer-card__actions .secondary {
+            background: #e9eef8;
+            color: #260e7a;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .badge-blue {
+            background: #e8f5fd;
+            color: #1e78b8;
+        }
+        .badge-green {
+            background: #e8f8ef;
+            color: #1f8a4c;
+        }
+        .badge-gray {
+            background: #eef0f5;
+            color: #56606f;
+        }
+        @media (max-width: 640px) {
+            .offer-card__meta {
+                grid-template-columns: 1fr;
+            }
+        }
+        a {
+            color: #59bde8;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Turbo Szrot</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a> |
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('favorites') }}">Ulubione</a> |
+                <a href="{{ url_for('orders') }}">Zamówienia</a> |
+                <a href="{{ url_for('chat_list') }}">Wiadomości{% if unread_messages_count and unread_messages_count > 0 %} <span style="background:#d9534f;color:white;padding:2px 6px;border-radius:10px;font-size:0.8em;margin-left:4px;">{{ unread_messages_count }}</span>{% endif %}</a> |
+                <a href="{{ url_for('add_part') }}">Dodaj czesc</a> |
+                <a href="{{ url_for('seller_panel') }}">Panel sprzedawcy</a> |
+                <a href="{{ url_for('settings') }}">Ustawienia konta</a> |
+                <span>Zalogowano: {{ current_user.username }}</span>
+                {% if seller_unread_count and seller_unread_count > 0 %}
+                    <a href="{{ url_for('seller_panel') }}" style="margin-left:8px;background:#d9534f;color:white;padding:4px 8px;border-radius:12px;text-decoration:none;">Nowe zamówienia: {{ seller_unread_count }}</a>
+                {% endif %}
+                <form method="post" action="{{ url_for('logout') }}" style="display: inline;">
+                    <button type="submit" style="background: none; border: 0; color: white; cursor: pointer; font-weight: bold;">Wyloguj</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login') }}">Logowanie</a> |
+                <a href="{{ url_for('register') }}">Rejestracja</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Oferty sprzedawcy: {{ seller.username }}</h2>
+            <p>
+                <strong>Średnia ocena:</strong>
+                {% if seller_rating.count %}
+                    {{ "%.1f"|format(seller_rating.average) }}/5 ({{ seller_rating.count }} opinii)
+                {% else %}
+                    Brak ocen
+                {% endif %}
+            </p>
+
+            {% if parts %}
+                <div class="offers-grid">
+                    {% for part in parts %}
+                        <article class="offer-card">
+                            <div class="offer-card__image">
+                                {% set photo = primary_part_photo(part) %}
+                                {% if photo %}
+                                    <img src="{{ url_for('static', filename='uploads/' + photo) }}" alt="{{ part.project_name }}" />
+                                {% else %}
+                                    <span>Brak zdjęcia</span>
+                                {% endif %}
+                            </div>
+                            <div class="offer-card__body">
+                                <div class="offer-card__title">
+                                    <a href="{{ url_for('offer_detail', part_id=part.id) }}">{{ part.project_name }}</a>
+                                </div>
+                                <div class="offer-card__price">{{ "%.2f"|format(part.price) }} PLN</div>
+                                <div class="offer-card__meta">
+                                    <div>Kategoria: {{ part.category }}</div>
+                                    <div>Marka: {{ part.brand }}</div>
+                                    <div>Stan: {{ part.condition }}</div>
+                                    <div>Model: {{ part.model }}</div>
+                                    <div>Rocznik: {{ part.year }}</div>
+                                    <div>Ilość: {{ part.quantity }}</div>
+                                    <div>Status: {{ part.status }}</div>
+                                    <div><span class="badge badge-blue">{{ seller.username }}</span></div>
+                                </div>
+                                <div class="offer-card__actions">
+                                    <a class="primary" href="{{ url_for('offer_detail', part_id=part.id) }}">Zobacz ofertę</a>
+                                    <a class="secondary" href="{{ url_for('seller_offers', user_id=seller.id) }}">Profil sprzedawcy</a>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Ten sprzedawca nie ma teraz publicznych ofert.</p>
+            {% endif %}
+
+            <h2 style="margin-top: 24px;">Opinie o sprzedawcy</h2>
+            {% if seller_reviews %}
+                {% for review in seller_reviews %}
+                    <div style="padding: 12px 0; border-top: 1px solid #e8e8e8;">
+                        <strong>{{ review.reviewer_username }}</strong>
+                        <span> | {{ review.rating }}/5</span>
+                        <div style="margin-top: 5px;">{{ review.comment }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Ten sprzedawca nie ma jeszcze opinii.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

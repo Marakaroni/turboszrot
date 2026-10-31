@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ustawienia konta - Turbo Szrot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        header {
+            background-color: #260e7a;
+            color: #59bde8;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        nav {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        nav a, nav span {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        nav a:hover {
+            opacity: 0.8;
+        }
+        main {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            border: 1px solid #e8e8e8;
+        }
+        h2 {
+            color: #260e7a;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #59bde8;
+            padding-bottom: 8px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #260e7a;
+            box-shadow: 0 0 0 3px rgba(38, 14, 122, 0.1);
+        }
+        button {
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, filter 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-primary {
+            background-color: #260e7a;
+            color: white;
+        }
+        .btn-primary:hover {
+            filter: brightness(1.15);
+        }
+        .btn-secondary {
+            background-color: #e9eef8;
+            color: #260e7a;
+        }
+        .btn-secondary:hover {
+            filter: brightness(0.95);
+        }
+        .btn-danger {
+            background-color: #d9534f;
+            color: white;
+        }
+        .btn-danger:hover {
+            filter: brightness(0.95);
+        }
+        .btn-full {
+            width: 100%;
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash-message {
+            padding: 12px;
+            background-color: #eef8fc;
+            border: 1px solid #59bde8;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            color: #1e78b8;
+            font-weight: 500;
+        }
+        .qr-box {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .qr-box img {
+            width: 200px;
+            height: 200px;
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 10px;
+            background: white;
+        }
+        .secret-box {
+            margin: 15px 0;
+            padding: 12px;
+            background: #f7f8fc;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 1rem;
+            word-break: break-all;
+            text-align: center;
+            border: 1px solid #e1e4eb;
+            color: #260e7a;
+            font-weight: bold;
+        }
+        .info-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            background-color: #e8f8ef;
+            color: #1f8a4c;
+            margin-bottom: 15px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .actions-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Turbo Szrot</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a> |
+            <a href="{{ url_for('favorites') }}">Ulubione</a> |
+            <a href="{{ url_for('orders') }}">Zamówienia</a> |
+            <a href="{{ url_for('chat_list') }}">Wiadomości{% if unread_messages_count and unread_messages_count > 0 %} <span style="background:#d9534f;color:white;padding:2px 6px;border-radius:10px;font-size:0.8em;margin-left:4px;">{{ unread_messages_count }}</span>{% endif %}</a> |
+            <a href="{{ url_for('add_part') }}">Dodaj część</a> |
+            <a href="{{ url_for('seller_panel') }}">Panel sprzedawcy</a> |
+            <a href="{{ url_for('settings') }}" style="text-decoration: underline;">Ustawienia konta</a> |
+            <span>Zalogowano: {{ user.username }}</span>
+            <form method="post" action="{{ url_for('logout') }}" style="display: inline;">
+                <button type="submit" style="background: none; border: 0; color: white; cursor: pointer; font-weight: bold; font-size: inherit; padding: 0; margin-left: 10px;">Wyloguj</button>
+            </form>
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Card 1: Username Edit -->
+        <div class="card">
+            <h2>Ustawienia profilu</h2>
+            <form method="post" action="{{ url_for('settings') }}">
+                <input type="hidden" name="action" value="change_username" />
+                <div class="form-group">
+                    <label for="username">Nazwa użytkownika (Login)</label>
+                    <input type="text" id="username" name="username" value="{{ user.username }}" required />
+                </div>
+                <button type="submit" class="btn-primary">Zapisz nazwę</button>
+            </form>
+        </div>
+
+        <!-- Card 2: 2FA Edit -->
+        <div class="card">
+            <h2>Uwierzytelnianie dwuskładnikowe (2FA)</h2>
+            <div class="info-badge">Aktywne</div>
+            <p style="margin-bottom: 20px; line-height: 1.5; font-size: 0.95rem; color: #555;">
+                Logowanie dwuskładnikowe jest wymagane, aby zapewnić najwyższy poziom bezpieczeństwa Twojego konta. Jeśli chcesz przenieść dane logowania do nowej aplikacji uwierzytelniającej, możesz ponownie skonfigurować klucz.
+            </p>
+            <a href="{{ url_for('setup_2fa') }}" class="btn-secondary" style="display: inline-flex; text-decoration: none; padding: 12px 20px; border-radius: 10px; font-weight: bold;">Skonfiguruj ponownie 2FA</a>
+        </div>
+    </main>
+</body>
+</html>

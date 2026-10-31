@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ part.project_name }} - Turbo Szrot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        header {
+            background-color: #260e7a;
+            color: #59bde8;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        nav a:hover {
+            opacity: 0.8;
+        }
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .alert {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .alert.info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        h2 {
+            color: #000000;
+            margin-bottom: 15px;
+        }
+        h3 {
+            color: #000000;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        .offer-header {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+        .offer-image {
+            flex: 0 0 300px;
+            text-align: center;
+        }
+        .offer-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+        }
+        .offer-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 10px;
+        }
+        .offer-gallery img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        .photo-preview-modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            text-align: center;
+            padding-top: 40px;
+        }
+        .photo-preview-modal img {
+            max-width: 90%;
+            max-height: 85vh;
+            border-radius: 8px;
+            background: white;
+        }
+        .offer-image.no-image {
+            width: 300px;
+            height: 300px;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: #999;
+            font-size: 14px;
+        }
+        .offer-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        .price-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #59bde8;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .price-section .price {
+            font-size: 2em;
+            color: #000000;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .offer-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .detail-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .detail-block .label {
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 5px;
+        }
+        .detail-block .value {
+            color: #333;
+            font-size: 16px;
+        }
+        .negotiable-badge {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .seller-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+        .seller-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+        .description {
+            background-color: white;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            line-height: 1.6;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .buttons-section {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        button, .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        button:hover, .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .btn-primary {
+            background-color: #59bde8;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #3a9fc8;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-info {
+            background-color: #260e7a;
+            color: white;
+        }
+        .btn-info:hover {
+            background-color: #260e7a;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        a {
+            color: #59bde8;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            margin-bottom: 20px;
+        }
+        .back-link a {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #f0f0f0;
+            color: #333;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .back-link a:hover {
+            background-color: #e0e0e0;
+            text-decoration: none;
+        }
+        .buy-actions {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .buy-actions .action-btn {
+            min-width: 170px;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 18px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Turbo Szrot</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a> |
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('favorites') }}">Ulubione</a> |
+                <a href="{{ url_for('orders') }}">Zamówienia</a> |
+                <a href="{{ url_for('chat_list') }}">Wiadomości{% if unread_messages_count and unread_messages_count > 0 %} <span style="background:#d9534f;color:white;padding:2px 6px;border-radius:10px;font-size:0.8em;margin-left:4px;">{{ unread_messages_count }}</span>{% endif %}</a> |
+                <a href="{{ url_for('add_part') }}">Dodaj część</a> |
+                <a href="{{ url_for('seller_panel') }}">Panel sprzedawcy</a> |
+                <a href="{{ url_for('settings') }}">Ustawienia konta</a> |
+                <span>Zalogowano: {{ current_user.username }}</span>
+                {% if seller_unread_count and seller_unread_count > 0 %}
+                    <a href="{{ url_for('seller_panel') }}" style="margin-left:8px;background:#d9534f;color:white;padding:4px 8px;border-radius:12px;text-decoration:none;">Nowe zamówienia: {{ seller_unread_count }}</a>
+                {% endif %}
+                <form method="post" action="{{ url_for('logout') }}" style="display: inline;">
+                    <button type="submit" style="background: none; border: 0; color: white; cursor: pointer; font-weight: bold;">Wyloguj</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login') }}">Logowanie</a> |
+                <a href="{{ url_for('register') }}">Rejestracja</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <section>
+                    {% for message in messages %}
+                        <div class="alert">{{ message }}</div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+
+        <div class="back-link">
+            <a href="{{ url_for('home') }}">← Wróć do głównej</a>
+        </div>
+
+        <section>
+            <!--<h2>{{ part.project_name }}</h2>-->
+            <h2 style="font-size: 40px;">{{ part.project_name }}</h2>
+            
+            <div class="offer-header">
+                <div class="offer-image">
+                    {% set photos = part_photos(part) %}
+                    {% if photos %}
+                        <div class="offer-gallery">
+                            {% for photo in photos %}
+                                {% set photo_url = url_for('static', filename='uploads/' + photo) %}
+                                <img src="{{ photo_url }}" alt="{{ part.project_name }}" onclick="showPhoto('{{ photo_url }}')" />
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="offer-image no-image">
+                            Brak zdjęcia
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="offer-info">
+                    <div class="price-section">
+                        {% if negotiated_price and negotiated_price != part.price %}
+                            <div class="price" style="text-decoration: line-through; color: #999; font-size: 1.2rem;">{{ "%.2f"|format(part.price) }} PLN</div>
+                            <div class="price" style="color: #28a745;">{{ "%.2f"|format(negotiated_price) }} PLN (Wynegocjowana)</div>
+                        {% else %}
+                            <div class="price">{{ "%.2f"|format(part.price) }} PLN</div>
+                        {% endif %}
+                        {% if part.negotiable %}
+                            <div class="negotiable-badge">Cena do negocjacji</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="detail-block">
+                        <div class="label">Dostępna ilość:</div>
+                        <div class="value">{{ part.quantity }} szt.</div>
+                    </div>
+
+                    <div class="detail-block">
+                        <div class="label">Status:</div>
+                        <div class="value">{{ part.status }}</div>
+                    </div>
+
+                    <div class="detail-block">
+                        <div class="label">Stan:</div>
+                        <div class="value">{{ part.condition }}</div>
+                    </div>
+
+                    <div class="detail-block">
+                        <div class="label">Marka:</div>
+                        <div class="value">{{ part.brand }}</div>
+                    </div>
+
+                    <div class="detail-block">
+                        <div class="label">Model:</div>
+                        <div class="value">{{ part.model }}</div>
+                    </div>
+
+                    <div class="detail-block">
+                        <div class="label">Rocznik:</div>
+                        <div class="value">{{ part.year }}</div>
+                    </div>
+
+                    <div class="detail-block">
+                        <div class="label">Kategoria:</div>
+                        <div class="value">{{ part.category }}</div>
+                    </div>
+
+                    {% if part.vin %}
+                        <div class="detail-block">
+                            <div class="label">Numer VIN:</div>
+                            <div class="value">{{ part.vin }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if part.description %}
+                <h3>Pełny opis:</h3>
+                <div class="description">{{ part.description }}</div>
+            {% endif %}
+
+            <h3>Informacje o sprzedawcy:</h3>
+            <div class="seller-section">
+                <div class="seller-name">
+                    {% if seller %}
+                        <a href="{{ url_for('seller_offers', user_id=seller.id) }}">Zobacz pozostale oferty uzytkownika</a>
+                    {% else %}
+                        {{ part.username }}
+                    {% endif %}
+                </div>
+                {% if seller %}
+                    <div>
+                        <strong>Użytkownik:</strong> {{ seller.username }}
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <strong>Średnia ocena:</strong>
+                        {% if seller_rating.count %}
+                            {{ "%.1f"|format(seller_rating.average) }}/5 ({{ seller_rating.count }} opinii)
+                        {% else %}
+                            Brak ocen
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <div style="margin-top: 10px; color: #666; font-size: 14px;">
+                    Skontaktuj się ze sprzedawcą w celu uzyskania dodatkowych informacji lub wynegocjowania warunków.
+                </div>
+            </div>
+
+            <h3>Opinie o sprzedawcy:</h3>
+            <div class="seller-section">
+                {% if seller_reviews %}
+                    {% for review in seller_reviews %}
+                        <div style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">
+                            <strong>{{ review.reviewer_username }}</strong>
+                            <span> | {{ review.rating }}/5</span>
+                            <div style="margin-top: 5px;">{{ review.comment }}</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div>Ten sprzedawca nie ma jeszcze opinii.</div>
+                {% endif %}
+            </div>
+
+            <div class="buttons-section">
+                {% if current_user.is_authenticated %}
+                    {% if favorite %}
+                        <form method="post" action="{{ url_for('remove_favorite_route', part_id=part.id) }}">
+                            <input type="hidden" name="redirect_to" value="offer" />
+                            <button class="btn btn-secondary" type="submit">
+                                Usuń z ulubionych
+                            </button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{{ url_for('add_favorite_route', part_id=part.id) }}">
+                            <button class="btn btn-success" type="submit">
+                                Dodaj do ulubionych
+                            </button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <a class="btn btn-success" href="{{ url_for('login') }}">
+                        Dodaj do ulubionych
+                    </a>
+                {% endif %}
+
+                {% if current_user.is_authenticated and current_user.id != part.user_id %}
+                    <form method="post" action="{{ url_for('init_conversation', part_id=part.id) }}" style="display:inline;">
+                        <input type="hidden" name="source" value="offer_detail">
+                        <button class="btn btn-info" type="submit">
+                            Napisz do sprzedawcy
+                        </button>
+                    </form>
+                {% elif not current_user.is_authenticated %}
+                    <a class="btn btn-info" href="{{ url_for('login') }}">
+                        Zaloguj się, aby napisać
+                    </a>
+                {% endif %}
+                <div class="buy-actions">
+                    <form method="post" action="{{ url_for('quick_buy', part_id=part.id) }}" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                        <label style="display:flex; gap:8px; align-items:center;">
+                            Ilość:
+                            <input type="number" name="quantity" id="quantity_input" min="1" max="{{ part.quantity }}" value="1" style="width:70px; padding:6px; border-radius:4px; border:1px solid #ccc;" />
+                        </label>
+
+                        <label style="display:flex; gap:8px; align-items:center;">
+                            Dostawa:
+                            <select name="delivery_option" id="delivery_option" style="padding:6px; border-radius:4px;">
+                                <option value="odbiór osobisty">Odbiór osobisty - po kontakcie ze sprzedawcą</option>
+                                <option value="dostawa">Dostawa - +15 zł</option>
+                            </select>
+                        </label>
+
+                        <div id="address_field" style="display:none; gap:8px; align-items:center; flex-wrap:wrap;">
+                            <label style="display:flex; gap:8px; align-items:center;">
+                                Miasto:
+                                <input type="text" name="city" id="city_input" placeholder="Miasto" style="padding:8px; border-radius:4px; border:1px solid #ccc; min-width:160px;" />
+                            </label>
+
+                            <label style="display:flex; gap:8px; align-items:center;">
+                                Kod pocztowy:
+                                <input type="text" name="postal_code" id="postal_code_input" placeholder="00-000" style="padding:8px; border-radius:4px; border:1px solid #ccc; min-width:120px;" />
+                            </label>
+
+                            <label style="display:flex; gap:8px; align-items:center;">
+                                Ulica:
+                                <input type="text" name="street" id="street_input" placeholder="Ulica" style="padding:8px; border-radius:4px; border:1px solid #ccc; min-width:180px;" />
+                            </label>
+
+                            <label style="display:flex; gap:8px; align-items:center;">
+                                Numer domu:
+                                <input type="text" name="house_number" id="house_number_input" placeholder="Numer domu" style="padding:8px; border-radius:4px; border:1px solid #ccc; min-width:120px;" />
+                            </label>
+
+                            <label style="display:flex; gap:8px; align-items:center;">
+                                Numer mieszkania:
+                                <input type="text" name="apartment_number" id="apartment_number_input" placeholder="Opcjonalnie" style="padding:8px; border-radius:4px; border:1px solid #ccc; min-width:120px;" />
+                            </label>
+                        </div>
+
+                        <button class="btn btn-primary action-btn" type="submit">
+                            Kup teraz
+                        </button>
+
+                        <div id="price_summary" style="width:100%; margin-top:6px; font-weight:600;">
+                            Cena: {{ "%.2f"|format(negotiated_price) }} PLN
+                        </div>
+                    </form>
+
+                    <a href="{{ url_for('home') }}" class="btn btn-secondary action-btn">
+                        Powrót
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="photoPreview" class="photo-preview-modal" onclick="hidePhoto()">
+        <img id="photoPreviewImg" src="" alt="Podgląd zdjęcia" />
+    </div>
+
+    <script>
+        function showPhoto(photoUrl) {
+            document.getElementById('photoPreviewImg').src = photoUrl;
+            document.getElementById('photoPreview').style.display = 'block';
+        }
+
+        function hidePhoto() {
+            document.getElementById('photoPreview').style.display = 'none';
+        }
+
+        function contactSeller() {
+        }
+
+        function buyNow() {
+        }
+
+        (function () {
+            const basePrice = Number('{{ "%.2f"|format(negotiated_price) }}');
+            const quantityInput = document.getElementById('quantity_input');
+            const deliverySelect = document.getElementById('delivery_option');
+            const addressField = document.getElementById('address_field');
+            const priceSummary = document.getElementById('price_summary');
+            const cityInput = document.getElementById('city_input');
+            const postalCodeInput = document.getElementById('postal_code_input');
+            const streetInput = document.getElementById('street_input');
+            const houseNumberInput = document.getElementById('house_number_input');
+            const apartmentNumberInput = document.getElementById('apartment_number_input');
+
+            const addressInputs = [
+                cityInput,
+                postalCodeInput,
+                streetInput,
+                houseNumberInput,
+                apartmentNumberInput,
+            ];
+
+            function updateAddressVisibility() {
+                const requiresAddress = deliverySelect.value === 'dostawa';
+                addressField.style.display = requiresAddress ? 'flex' : 'none';
+                addressInputs.forEach((input) => {
+                    input.required = requiresAddress && input !== apartmentNumberInput;
+                    if (!requiresAddress) {
+                        input.value = '';
+                    }
+                });
+                if (requiresAddress) {
+                    apartmentNumberInput.required = false;
+                }
+            }
+
+            function updatePriceSummary() {
+                const quantity = Math.max(1, Number(quantityInput.value) || 1);
+                const deliveryFee = deliverySelect.value === 'dostawa' ? 15 : 0;
+                const total = (basePrice * quantity) + deliveryFee;
+                priceSummary.textContent = `Cena: ${total.toFixed(2)} PLN${deliveryFee ? ' (w tym +15 zł dostawa)' : ''}`;
+            }
+
+            deliverySelect.addEventListener('change', updateAddressVisibility);
+            quantityInput.addEventListener('input', updatePriceSummary);
+            deliverySelect.addEventListener('change', updatePriceSummary);
+            updateAddressVisibility();
+            updatePriceSummary();
+        })();
+    </script>
+</body>
+</html>

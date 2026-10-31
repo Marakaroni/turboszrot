@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Turbo Szrot - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        header {
+            background-color: #260e7a;
+            color: #59bde8;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        nav a:hover {
+            opacity: 0.8;
+        }
+        .search-bar {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+        }
+        .search-bar form {
+            width: 100%;
+            max-width: 760px;
+            display: flex;
+            gap: 10px;
+            background: transparent;
+            padding: 0;
+            border: 0;
+            box-shadow: none;
+            backdrop-filter: none;
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 12px 14px;
+            border: 0;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+        }
+        .search-bar button {
+            padding: 12px 18px;
+            border: 0;
+            border-radius: 10px;
+            background: #59bde8;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .search-bar button:hover {
+            filter: brightness(0.95);
+        }
+        .filters-panel {
+            margin: 12px 0 18px;
+            padding: 16px;
+            border: 1px solid #e6e6e6;
+            border-radius: 14px;
+            background: #fafcff;
+        }
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .filters-grid label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.95rem;
+            color: #333;
+        }
+        .filters-grid input,
+        .filters-grid select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d7d7d7;
+            border-radius: 10px;
+            background: white;
+        }
+        .filters-actions {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filters-actions button,
+        .filters-actions a {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 0;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .filters-actions button {
+            background: #260e7a;
+            color: white;
+            cursor: pointer;
+        }
+        .filters-actions a {
+            background: #e9eef8;
+            color: #260e7a;
+        }
+        .filters-actions button:hover,
+        .filters-actions a:hover {
+            filter: brightness(0.97);
+            text-decoration: none;
+        }
+        .filters-summary {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #59bde8;
+            margin-bottom: 15px;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin-top: 10px;
+        }
+        .offer-card {
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+        .offer-card__image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: #f4f6fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .offer-card__image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .offer-card__image span {
+            color: #8a8a8a;
+            font-weight: 600;
+        }
+        .offer-card__body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .offer-card__title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #260e7a;
+            line-height: 1.3;
+        }
+        .offer-card__seller {
+            font-size: 0.92rem;
+            color: #666;
+        }
+        .offer-card__price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #59bde8;
+        }
+        .offer-card__meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            font-size: 0.92rem;
+            color: #444;
+        }
+        .offer-card__meta div {
+            background: #f7f8fc;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+        .offer-card__badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .badge-blue {
+            background: #e8f5fd;
+            color: #1e78b8;
+        }
+        .badge-green {
+            background: #e8f8ef;
+            color: #1f8a4c;
+        }
+        .badge-gray {
+            background: #eef0f5;
+            color: #56606f;
+        }
+        .offer-card__actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .offer-card__actions a,
+        .offer-card__actions button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            font-family: inherit;
+            font-size: inherit;
+            cursor: pointer;
+        }
+        .offer-card__actions .primary {
+            background: #260e7a;
+            color: #fff;
+        }
+        .offer-card__actions .secondary {
+            background: #e9eef8;
+            color: #260e7a;
+        }
+        .offer-card__actions a:hover,
+        .offer-card__actions button:hover {
+            text-decoration: none;
+            filter: brightness(0.98);
+        }
+        @media (max-width: 640px) {
+            .offer-card__meta {
+                grid-template-columns: 1fr;
+            }
+        }
+        p {
+            margin: 10px 0;
+        }
+        a {
+            color: #59bde8;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Turbo Szrot</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a> |
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('favorites') }}">Ulubione</a> |
+                <a href="{{ url_for('orders') }}">Zamówienia</a> |
+                <a href="{{ url_for('chat_list') }}">Wiadomości{% if unread_messages_count and unread_messages_count > 0 %} <span style="background:#d9534f;color:white;padding:2px 6px;border-radius:10px;font-size:0.8em;margin-left:4px;">{{ unread_messages_count }}</span>{% endif %}</a> |
+                <a href="{{ url_for('add_part') }}">Dodaj część</a> |
+                <a href="{{ url_for('seller_panel') }}">Panel sprzedawcy</a> |
+                <a href="{{ url_for('settings') }}">Ustawienia konta</a> |
+                <span>Zalogowano: {{ current_user.username }}</span>
+                {% if seller_unread_count and seller_unread_count > 0 %}
+                    <a href="{{ url_for('seller_panel') }}" style="margin-left:8px;background:#d9534f;color:white;padding:4px 8px;border-radius:12px;text-decoration:none;">Nowe zamówienia: {{ seller_unread_count }}</a>
+                {% endif %}
+                <form method="post" action="{{ url_for('logout') }}" style="display: inline;">
+                    <button type="submit" style="background: none; border: 0; color: white; cursor: pointer; font-weight: bold;">Wyloguj</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login') }}">Logowanie</a> |
+                <a href="{{ url_for('register') }}">Rejestracja</a>
+            {% endif %}
+        </nav>
+        <div class="search-bar">
+            <form method="get" action="{{ url_for('home') }}">
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ request.args.get('q', '') }}"
+                    placeholder="Szukaj części, marki, modelu, kategorii albo sprzedawcy"
+                />
+                <button type="submit">Szukaj</button>
+            </form>
+        </div>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <section>
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+
+        <section>
+            <h2>Założenia TurboSzrot:</h2>
+            <ul>
+                <li>Inteligentne wyszukiwanie części samochodowych po modelu, roczniku lub numerze VIN</li>
+                <li>Negocjacje ceny w czacie transakcyjnym</li>
+                <li>Bezpieczne płatności online z systemem escrow</li>
+                <li>Panel dla sprzedawców z zarządzaniem ofertami i statystykami</li>
+                <li>Rejestracja i logowanie użytkowników</li>
+                <li>Integracja z firmami kurierskimi dla automatycznej wysyłki</li>
+                <li>System ocen i opinii użytkowników</li>
+                <li>Centralna baza ofert z wielu stacji demontażu</li>
+                <li>Intuicyjny i nowoczesny interfejs użytkownika</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Dostępne części do kupienia:</h2>
+            {% if request.args.get('q') %}
+                <p>Wyniki dla: <strong>{{ request.args.get('q') }}</strong></p>
+            {% endif %}
+            <div class="filters-panel">
+                <form method="get" action="{{ url_for('home') }}">
+                    <input type="hidden" name="q" value="{{ request.args.get('q', '') }}" />
+                    <div class="filters-grid">
+                        <label>
+                            Kategoria
+                            <input type="text" name="category" value="{{ request.args.get('category', '') }}" placeholder="np. silnik" />
+                        </label>
+                        <label>
+                            Marka
+                            <input type="text" name="brand" value="{{ request.args.get('brand', '') }}" placeholder="np. BMW" />
+                        </label>
+                        <label>
+                            Model
+                            <input type="text" name="model" value="{{ request.args.get('model', '') }}" placeholder="np. E46" />
+                        </label>
+                        <label>
+                            Stan
+                            <input type="text" name="condition" value="{{ request.args.get('condition', '') }}" placeholder="np. używany" />
+                        </label>
+                        <label>
+                            Rocznik od
+                            <input type="number" name="min_year" value="{{ request.args.get('min_year', '') }}" min="1800" max="2100" />
+                        </label>
+                        <label>
+                            Rocznik do
+                            <input type="number" name="max_year" value="{{ request.args.get('max_year', '') }}" min="1800" max="2100" />
+                        </label>
+                        <label>
+                            Cena od
+                            <input type="number" name="min_price" value="{{ request.args.get('min_price', '') }}" min="0" step="0.01" />
+                        </label>
+                        <label>
+                            Cena do
+                            <input type="number" name="max_price" value="{{ request.args.get('max_price', '') }}" min="0" step="0.01" />
+                        </label>
+                        <label>
+                            Negocjacje
+                            <select name="negotiable">
+                                {% set negotiable_value = request.args.get('negotiable', '') %}
+                                <option value="" {% if not negotiable_value %}selected{% endif %}>Wszystkie</option>
+                                <option value="tak" {% if negotiable_value == 'tak' %}selected{% endif %}>Tak</option>
+                                <option value="nie" {% if negotiable_value == 'nie' %}selected{% endif %}>Nie</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="filters-actions">
+                        <button type="submit">Zastosuj filtry</button>
+                        <a href="{{ url_for('home') }}">Wyczyść</a>
+                    </div>
+                </form>
+            </div>
+            {% if parts %}
+                <div class="offers-grid">
+                    {% for part in parts %}
+                        <article class="offer-card">
+                            <div class="offer-card__image">
+                                {% set photo = primary_part_photo(part) %}
+                                {% if photo %}
+                                    <img src="{{ url_for('static', filename='uploads/' + photo) }}" alt="{{ part.project_name }}" />
+                                {% else %}
+                                    <span>Brak zdjęcia</span>
+                                {% endif %}
+                            </div>
+                            <div class="offer-card__body">
+                                <div class="offer-card__title">
+                                    <a href="{{ url_for('offer_detail', part_id=part.id) }}">{{ part.project_name }}</a>
+                                </div>
+                                <div class="offer-card__seller">
+                                    Sprzedawca:
+                                    {% if part.user_id %}
+                                        <a href="{{ url_for('seller_offers', user_id=part.user_id) }}">{{ part.username }}</a>
+                                        {% set rating = seller_ratings.get(part.user_id) %}
+                                        {% if rating and rating.count %}
+                                            <span> | Ocena: {{ "%.1f"|format(rating.average) }}/5 ({{ rating.count }})</span>
+                                        {% else %}
+                                            <span> | Brak ocen</span>
+                                        {% endif %}
+                                    {% else %}
+                                        {{ part.username }}
+                                    {% endif %}
+                                </div>
+                                <div class="offer-card__price">{{ "%.2f"|format(part.price) }} PLN</div>
+                                <div class="offer-card__badges">
+                                    <span class="badge badge-blue">{{ part.category }}</span>
+                                    <span class="badge badge-green">{{ part.brand }} / {{ part.model }}</span>
+                                    <span class="badge badge-gray">{{ part.year }}</span>
+                                </div>
+                                <div class="offer-card__meta">
+                                    <div>Stan: {{ part.condition }}</div>
+                                    <div>Ilość: {{ part.quantity }}</div>
+                                    <div>Status: {{ part.status }}</div>
+                                    <div>Negocjacje: {{ "Tak" if part.negotiable else "Nie" }}</div>
+                                </div>
+                                <div class="offer-card__actions">
+                                    <a class="primary" href="{{ url_for('offer_detail', part_id=part.id) }}">Zobacz ofertę</a>
+                                    {% if part.user_id %}
+                                        <a class="secondary" href="{{ url_for('seller_offers', user_id=part.user_id) }}">Oferty sprzedawcy</a>
+                                    {% endif %}
+                                    {% if current_user.is_authenticated and current_user.id != part.user_id %}
+                                        <form method="post" action="{{ url_for('init_conversation', part_id=part.id) }}" style="display:inline;">
+                                            <input type="hidden" name="source" value="home">
+                                            <button class="secondary" type="submit">Napisz do sprzedawcy</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% if request.args.get('q') or request.args.get('category') or request.args.get('brand') or request.args.get('model') or request.args.get('condition') or request.args.get('min_year') or request.args.get('max_year') or request.args.get('min_price') or request.args.get('max_price') or request.args.get('negotiable') %}
+                    <p>Brak takiej oferty.</p>
+                {% elif current_user.is_authenticated %}
+                    <p>Brak dostępnych ofert w katalogu. <a href="{{ url_for('add_part') }}">Dodaj pierwszą część</a>.</p>
+                {% else %}
+                    <p>Brak dostępnych ofert w katalogu.</p>
+                {% endif %}
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

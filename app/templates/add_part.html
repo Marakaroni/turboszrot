@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Turbo Szrot - Add Part</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        header {
+            background-color: #260e7a;
+            color: #59bde8;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        nav a:hover {
+            opacity: 0.8;
+        }
+        main {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #59bde8;
+            margin-bottom: 20px;
+        }
+        form p {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: Arial, sans-serif;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="file"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #59bde8;
+            box-shadow: 0 0 5px rgba(211, 47, 47, 0.3);
+        }
+        textarea {
+            resize: vertical;
+        }
+        button {
+            background-color: #59bde8;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #59bde8;
+        }
+        input[type="checkbox"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        .alert {
+            background-color: #f8d7da;
+            border: 1px solid #f5c2c7;
+            color: #842029;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Turbo Szrot</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a> |
+            <a href="{{ url_for('favorites') }}">Ulubione</a> |
+            <a href="{{ url_for('add_part') }}">Dodaj część</a> |
+            <a href="{{ url_for('seller_panel') }}">Panel sprzedawcy</a> |
+            <a href="{{ url_for('settings') }}">Ustawienia konta</a> |
+            <span>Zalogowano: {{ current_user.username }}</span>
+            {% if seller_unread_count and seller_unread_count > 0 %}
+                    <a href="{{ url_for('seller_panel') }}" style="margin-left:8px;background:#d9534f;color:white;padding:4px 8px;border-radius:12px;text-decoration:none;">Nowe zamówienia: {{ seller_unread_count }}</a>
+            {% endif %}
+            <form method="post" action="{{ url_for('logout') }}" style="display: inline;">
+                <button type="submit" style="background: none; border: 0; color: white; cursor: pointer; font-weight: bold;">Wyloguj</button>
+            </form>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Dodaj część</h2>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" action="{{ url_for('add_part') }}" enctype="multipart/form-data">
+            <p>
+                <label for="project_name">Nazwa</label><br />
+                <input type="text" id="project_name" name="project_name" value="{{ form_data.get('project_name', '') }}" required />
+            </p>
+
+            <p>
+                <label for="category">Kategoria</label><br />
+                <select id="category" name="category" required>
+                    <option value="" disabled {% if not form_data.get('category') %}selected{% endif %} hidden>Wybierz kategorię</option>
+                    <option value="Silnik i osprzęt" {% if form_data.get('category') == "Silnik i osprzęt" %}selected{% endif %}>Silnik i osprzęt</option>
+                    <option value="Układ napędowy" {% if form_data.get('category') == "Układ napędowy" %}selected{% endif %}>Układ napędowy</option>
+                    <option value="Zawieszenie i układ kierowniczy" {% if form_data.get('category') == "Zawieszenie i układ kierowniczy" %}selected{% endif %}>Zawieszenie i układ kierowniczy</option>
+                    <option value="Układ hamulcowy" {% if form_data.get('category') == "Układ hamulcowy" %}selected{% endif %}>Układ hamulcowy</option>
+                    <option value="Elektryka i elektronika" {% if form_data.get('category') == "Elektryka i elektronika" %}selected{% endif %}>Elektryka i elektronika</option>
+                    <option value="Układ chłodzenia i klimatyzacji" {% if form_data.get('category') == "Układ chłodzenia i klimatyzacji" %}selected{% endif %}>Układ chłodzenia i klimatyzacji</option>
+                    <option value="Karoseria i nadwozie" {% if form_data.get('category') == "Karoseria i nadwozie" %}selected{% endif %}>Karoseria i nadwozie</option>
+                    <option value="Oświetlenie" {% if form_data.get('category') == "Oświetlenie" %}selected{% endif %}>Oświetlenie</option>
+                    <option value="Wnętrze" {% if form_data.get('category') == "Wnętrze" %}selected{% endif %}>Wnętrze</option>
+                    <option value="Koła i opony" {% if form_data.get('category') == "Koła i opony" %}selected{% endif %}>Koła i opony</option>
+                    <option value="Układ wydechowy" {% if form_data.get('category') == "Układ wydechowy" %}selected{% endif %}>Układ wydechowy</option>
+                    <option value="Inne" {% if form_data.get('category') == "Inne" %}selected{% endif %}>Inne</option>
+                </select>
+            </p>
+
+            <p>
+                <label for="brand">Marka/producent </label><br />
+                <input type="text" id="brand" name="brand" value="{{ form_data.get('brand', '') }}" required />
+            </p>
+
+            <p>
+                <label for="condition">Stan </label><br />
+                <select id="condition" name="condition" required>
+                    <option value="" disabled {% if not form_data.get('condition') %}selected{% endif %} hidden>Wybierz stan</option>
+                    <option value="Nowe" {% if form_data.get('condition') == "Nowe" %}selected{% endif %}>Nowe</option>
+                    <option value="Używane" {% if form_data.get('condition') == "Używane" %}selected{% endif %}>Używane</option>
+                </select>
+            </p>
+            
+
+            <p>
+                <label for="model">Model auta </label><br />
+                <input type="text" id="model" name="model" value="{{ form_data.get('model', '') }}" required />
+            </p>
+
+            <p>
+                <label for="year">Rocznik auta </label><br />
+                <input type="number" id="year" name="year" min="1800" max="2100" value="{{ form_data.get('year', '') }}" required />
+            </p>
+
+            <p>
+                <label for="price">Cena (PLN)</label><br />
+                <input type="number" id="price" name="price" min="0" step="0.01" value="{{ form_data.get('price', '') }}" required />
+            </p>
+
+            <p>
+                <label for="quantity">Ilość sztuk</label><br />
+                <input type="number" id="quantity" name="quantity" min="1" value="{{ form_data.get('quantity', '1') }}" required />
+            </p>
+
+            <p>
+                <label for="negotiable">
+                    <input type="checkbox" id="negotiable" name="negotiable" {% if form_data.get('negotiable') == 'on' %}checked{% endif %} />
+                    Możliwość negocjacji
+                </label>
+            </p>
+
+            <p>
+                <label for="vin">VIN</label><br />
+                <input type="text" id="vin" name="vin" maxlength="17" value="{{ form_data.get('vin', '') }}" />
+            </p>
+
+            <p>
+                <label for="description">Opis</label><br />
+                <textarea id="description" name="description" rows="4" cols="40" placeholder="Dodatkowe informacje o części">{{ form_data.get('description', '') }}</textarea>
+            </p>
+
+            <p>
+                <label for="photo">Zdjęcia</label><br />
+                <input type="file" id="photo" name="photo" accept="image/*" multiple />
+            </p>
+
+            <button type="submit">Dodaj część</button>
+        </form>
+    </main>
+</body>
+</html>

@@ -1,0 +1,28 @@
+services:
+  web:
+    build: .
+    container_name: turbo_szrot_web
+    env_file:
+      - .env
+    volumes:
+      - sqlite_data:/data
+      - uploads_data:/app/app/static/uploads
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: turbo_szrot_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl/certs:/etc/ssl/certs:ro
+      - uploads_data:/app/static/uploads:ro
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:
+  uploads_data:
